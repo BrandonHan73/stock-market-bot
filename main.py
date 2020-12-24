@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
+########################################################################################################################
+
 def charToInt(character):
     if character == '0':
         return 0
@@ -22,7 +24,7 @@ def charToInt(character):
         return 8
     elif character == '9':
         return 9
-    
+
 
 def stringToDouble(string):
     negative = False
@@ -47,16 +49,19 @@ def stringToDouble(string):
 
     return retVal
 
-tails = ["GSPC", "DJI", "IXIC", "RUT"]
+########################################################################################################################
+
+tails = ["GSPC", "DJI", "IXIC", "RUT", "BABA", "GEVO", "SENS", "PDD", "BLNK"]
 values = {}
 
 for tail in tails:
+    print(tail)
 
     req = requests.get("https://finance.yahoo.com/quote/%5E" + tail + "?p=^" + tail)
     html = req.text
     soup = BeautifulSoup(html, "html.parser")
 
-    change = soup.find_all("span", {"data-reactid": "34"})[1].text
+    change = soup.find_all("span", {"data-reactid": "34"})[-1].text
 
     while True:
         if change[-1] != ' ':
