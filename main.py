@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
+
 ########################################################################################################################
 
 def charToInt(character):
@@ -34,6 +35,8 @@ def stringToDouble(string):
     for cur in string:
         if cur == '-':
             negative = True
+        elif cur == '+':
+            negative = False
         elif cur == '.':
             isDouble = True
         else:
@@ -49,30 +52,34 @@ def stringToDouble(string):
 
     return retVal
 
+
 ########################################################################################################################
 
-tails = ["GSPC", "DJI", "IXIC", "RUT", "BABA", "GEVO", "SENS", "PDD", "BLNK"]
+tails = ["GSPC", "DJI", "IXIC", "RUT"] \
+    # tails = ["GSPC"]
 values = {}
 
 for tail in tails:
     print(tail)
-
     req = requests.get("https://finance.yahoo.com/quote/%5E" + tail + "?p=^" + tail)
     html = req.text
     soup = BeautifulSoup(html, "html.parser")
 
-    change = soup.find_all("span", {"data-reactid": "34"})[-1].text
+    data = soup.find("div", {"id": "YDC-Lead-Stack-Composite", "data-reactid": "24"})
+    data = data.find("div", {"id": "Lead-3-QuoteHeader-Proxy"})
+    positive = data.find("span", {"class": "Trsdu(0.3s) Fw(500) Pstart(10px) Fz(24px) C($positiveColor)"})
+    negative = data.find("span", {"class": "Trsdu(0.3s) Fw(500) Pstart(10px) Fz(24px) C($negativeColor)"})
 
-    while True:
-        if change[-1] != ' ':
-            change = change[:-1]
-        else:
-            change = change[:-1]
-            break
+    if positive == None:
+        data = negative.text
+    if negative == None:
+        data = positive.text
 
-    if change[0] == '+':
-        change = change[1:]
+    for i in range(0, len(data)):
+        if data[i] == ' ':
+            data = data[:i]
+            break;
 
-    values[tail] = stringToDouble(change)
+    values[tail] = stringToDouble(data)
 
 print(values)
