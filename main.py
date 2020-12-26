@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import alpaca_trade_api as alpaca
 import requests
 
 
@@ -55,12 +56,14 @@ def stringToDouble(string):
 
 ########################################################################################################################
 
-tails = ["GSPC", "DJI", "IXIC", "RUT"] \
-    # tails = ["GSPC"]
+api = alpaca.REST("PKMIHD7YPISGCHKFWCXP", "Z1kRzghlsybxbCJskz3cUNBeB6RIVsJCJuSvpn5z", base_url = "https://paper-api.alpaca.markets")
+account = api.get_account()
+api.list_positions()
+
+tails = ["GSPC", "DJI", "IXIC", "RUT"]
 values = {}
 
 for tail in tails:
-    print(tail)
     req = requests.get("https://finance.yahoo.com/quote/%5E" + tail + "?p=^" + tail)
     html = req.text
     soup = BeautifulSoup(html, "html.parser")
