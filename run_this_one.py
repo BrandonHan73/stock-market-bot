@@ -9,3 +9,6 @@ while True:
         api.submit_order('NVDA', 1, 'buy', 'market', 'day')
         counter = counter + 1
         print(counter, 'purchases processed')
+    except Exception as e:
+        pass
+        
